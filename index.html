@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Three.js Rotating Rubik's Cube</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Set up the scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create a single cube
+        const cubeSize = 1;
+        const cubeSpacing = 1.01;
+
+        const materials = [
+            new THREE.MeshBasicMaterial({ color: 0xff0000, roughness: 10 }), // Red
+            new THREE.MeshBasicMaterial({ color: 0x00ff00, roughness: 1 }), // Green
+            new THREE.MeshBasicMaterial({ color: 0x0000ff, roughness: 1 }), // Blue
+            new THREE.MeshBasicMaterial({ color: 0xffff00, roughness: 1 }), // Yellow
+            new THREE.MeshBasicMaterial({ color: 0xff00ff, roughness: 1 }), // Magenta
+            new THREE.MeshBasicMaterial({ color: 0x00ffff, roughness: 1 }), // Cyan
+        ];
+
+        const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+        const cube = new THREE.Mesh(geometry, materials);
+
+        // Create the Rubik's Cube by stacking multiple cubes
+        const rubikSize = 3;
+        const rubikSpacing = cubeSize * cubeSpacing;
+
+        for (let i = 0; i < rubikSize; i++) {
+            for (let j = 0; j < rubikSize; j++) {
+                for (let k = 0; k < rubikSize; k++) {
+                    const newCube = cube.clone();
+
+                    newCube.position.x = (i - 1) * rubikSpacing;
+                    newCube.position.y = (j - 1) * rubikSpacing;
+                    newCube.position.z = (k - 1) * rubikSpacing;
+
+                    scene.add(newCube);
+                }
+            }
+        }
+
+        // Position the camera
+        camera.position.z = 5;
+
+        // Rotation animation
+        function rotateCube() {
+            scene.rotation.x += -0.01; // Adjust rotation speed as desired
+            scene.rotation.y += 0;
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            rotateCube();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+
+</html>
